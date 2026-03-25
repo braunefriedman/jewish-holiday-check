@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jewish Holiday Lookup</title>
+  <style>
+    :root {
+      --bg1: #f4f0e8;
+      --bg2: #ffffff;
+      --card: rgba(255,255,255,0.92);
+      --ink: #21313c;
+      --muted: #64727d;
+      --gold: #b08a39;
+      --gold-soft: #e9d7a9;
+      --line: #e6dfd1;
+      --shadow: 0 18px 45px rgba(33,49,60,0.12);
+      --major: #7a4b00;
+      --high: #8b1e3f;
+      --minor: #2a5f8a;
+      --none: #557061;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, #fff7df 0%, transparent 32%),
+        radial-gradient(circle at bottom right, #efe7d5 0%, transparent 28%),
+        linear-gradient(135deg, var(--bg1), #f8f6f1 55%, #f2ece0);
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 20px 60px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: 0.2px;
+      color: #263844;
+    }
+
+    .hero p {
+      margin: 0 auto;
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.55;
+    }
+
+    .card {
+      background: var(--card);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.7);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    .lookup {
+      display: grid;
+      gap: 16px;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #355060;
+    }
+
+    .date-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: end;
+    }
+
+    input[type="date"] {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid #d8d0bf;
+      background: #fffdfa;
+      font-size: 1rem;
+      color: var(--ink);
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 14px 20px;
+      font-size: 1rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #8d6a20, #c59b45);
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(176,138,57,0.28);
+    }
+
+    button:hover {
+      filter: brightness(1.03);
+      transform: translateY(-1px);
+    }
+
+    .result {
+      margin-top: 22px;
+      border-top: 1px solid var(--line);
+      padding-top: 22px;
+    }
+
+    .result.hidden {
+      display: none;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #f4eee2;
+      color: #6c5c39;
+      margin-bottom: 14px;
+    }
+
+    .status.major {
+      background: #f7e9cf;
+      color: var(--major);
+    }
+
+    .status.high {
+      background: #f8dfe7;
+      color: var(--high);
+    }
+
+    .status.minor {
+      background: #e3eef7;
+      color: var(--minor);
+    }
+
+    .status.none {
+      background: #e6f1ed;
+      color: var(--none);
+    }
+
+    .holiday-name {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800;
+      margin: 0 0 8px;
+      color: #223744;
+    }
+
+    .sub {
+      margin: 0 0 6px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 1rem;
+    }
+
+    .category {
+      margin: 14px 0 0;
+      font-size: 1.02rem;
+      font-weight: 700;
+    }
+
+    .links {
+      display: grid;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .policy-link {
+      display: block;
+      text-decoration: none;
+      padding: 16px 18px;
+      border-radius: 16px;
+      border: 1px solid #e4dbc9;
+      background: linear-gradient(180deg, #fffdfa, #f8f2e7);
+      color: #304554;
+      font-weight: 700;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .policy-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(33,49,60,0.10);
+    }
+
+    .policy-link small {
+      display: block;
+      margin-top: 4px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 640px) {
+      .date-row {
+        grid-template-columns: 1fr;
+      }
+      button {
+        width: 100%;
+      }
+      .card {
+        padding: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <h1>Jewish Holiday Lookup</h1>
+      <p>Select a calendar date to see whether it is a Jewish holiday. If it is, the holiday name, observance category, and CESLC policy links will appear.</p>
+    </div>
+
+    <div class="card">
+      <div class="lookup">
+        <div>
+          <label class="field-label" for="holidayDate">Choose a date</label>
+          <div class="date-row">
+            <input type="date" id="holidayDate" />
+            <button id="checkBtn" type="button">Check Date</button>
+          </div>
+        </div>
+
+        <div id="result" class="result hidden" aria-live="polite">
+          <div id="statusBadge" class="status">Result</div>
+          <h2 id="holidayName" class="holiday-name"></h2>
+          <p id="holidayDateText" class="sub"></p>
+          <p id="holidayEffect" class="sub"></p>
+          <p id="holidayCategory" class="category"></p>
+
+          <div id="policyLinks" class="links hidden">
+            <a class="policy-link" href="https://ceslc.policystat.com/policy/token_access/be679bbf-620c-411d-ad68-b8eee86a804a/" target="_blank" rel="noopener noreferrer">
+              Hebrew Home Policy
+              <small>Open the Hebrew Home holiday policy</small>
+            </a>
+            <a class="policy-link" href="https://ceslc.policystat.com/collaboration/feeds/latest/ceslc/18067692/l4ysDA19r1kvom1UmgJce2/" target="_blank" rel="noopener noreferrer">
+              Housing Policy
+              <small>Open the housing holiday policy</small>
+            </a>
+          </div>
+        </div>
+
+        <p class="footer-note">Data source: uploaded holiday spreadsheet with columns Holiday Name, In Effect, Observance Level, 2026, 2027, and 2028.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const holidayData = [
+  {
+    "date": "2026-02-02",
+    "holiday": "Tu BiShvat",
+    "in_effect": "All day",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-01-23",
+    "holiday": "Tu BiShvat",
+    "in_effect": "All day",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-02-12",
+    "holiday": "Tu BiShvat",
+    "in_effect": "All day",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-03-02",
+    "holiday": "Erev Purim",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-03-22",
+    "holiday": "Erev Purim",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-03-11",
+    "holiday": "Erev Purim",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-03-03",
+    "holiday": "Purim",
+    "in_effect": "Until Nightfall",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-03-23",
+    "holiday": "Purim",
+    "in_effect": "Until Nightfall",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-03-12",
+    "holiday": "Purim",
+    "in_effect": "Until Nightfall",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-04-01",
+    "holiday": "Erev Passover",
+    "in_effect": "From 4:00pm",
+    "category": "High"
+  },
+  {
+    "date": "2027-04-21",
+    "holiday": "Erev Passover",
+    "in_effect": "From 4:00pm",
+    "category": "High"
+  },
+  {
+    "date": "2028-04-10",
+    "holiday": "Erev Passover",
+    "in_effect": "From 4:00pm",
+    "category": "High"
+  },
+  {
+    "date": "2026-04-02",
+    "holiday": "Passover - Day 1",
+    "in_effect": "Until Nightfall",
+    "category": "High"
+  },
+  {
+    "date": "2027-04-22",
+    "holiday": "Passover - Day 1",
+    "in_effect": "Until Nightfall",
+    "category": "High"
+  },
+  {
+    "date": "2028-04-11",
+    "holiday": "Passover - Day 1",
+    "in_effect": "Until Nightfall",
+    "category": "High"
+  },
+  {
+    "date": "2026-04-03",
+    "holiday": "Passover - Day 2",
+    "in_effect": "Until Nightfall",
+    "category": "Major"
+  },
+  {
+    "date": "2027-04-23",
+    "holiday": "Passover - Day 2",
+    "in_effect": "Until Nightfall",
+    "category": "Major"
+  },
+  {
+    "date": "2028-04-12",
+    "holiday": "Passover - Day 2",
+    "in_effect": "Until Nightfall",
+    "category": "Major"
+  },
+  {
+    "date": "2026-04-04",
+    "holiday": "Passover - Day 3 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-04-24",
+    "holiday": "Passover - Day 3 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-04-13",
+    "holiday": "Passover - Day 3 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-04-05",
+    "holiday": "Passover - Day 4 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-04-25",
+    "holiday": "Passover - Day 4 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-04-14",
+    "holiday": "Passover - Day 4 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-04-06",
+    "holiday": "Passover - Day 5 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-04-26",
+    "holiday": "Passover - Day 5 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-04-15",
+    "holiday": "Passover - Day 5 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-04-07",
+    "holiday": "Passover - Day 6 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-04-27",
+    "holiday": "Passover - Day 6 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-04-16",
+    "holiday": "Passover - Day 6 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-04-08",
+    "holiday": "Passover - Day 7",
+    "in_effect": "All Day",
+    "category": "Major"
+  },
+  {
+    "date": "2027-04-28",
+    "holiday": "Passover - Day 7",
+    "in_effect": "All Day",
+    "category": "Major"
+  },
+  {
+    "date": "2028-04-17",
+    "holiday": "Passover - Day 7",
+    "in_effect": "All Day",
+    "category": "Major"
+  },
+  {
+    "date": "2026-04-09",
+    "holiday": "Passover - Day 8",
+    "in_effect": "Until 10:00pm",
+    "category": "Major"
+  },
+  {
+    "date": "2027-04-29",
+    "holiday": "Passover - Day 8",
+    "in_effect": "Until 10:00pm",
+    "category": "Major"
+  },
+  {
+    "date": "2028-04-18",
+    "holiday": "Passover - Day 8",
+    "in_effect": "Until 10:00pm",
+    "category": "Major"
+  },
+  {
+    "date": "2026-04-14",
+    "holiday": "Yom HaShoah",
+    "in_effect": "All Day",
+    "category": "Somber"
+  },
+  {
+    "date": "2027-05-04",
+    "holiday": "Yom HaShoah",
+    "in_effect": "All Day",
+    "category": "Somber"
+  },
+  {
+    "date": "2028-04-24",
+    "holiday": "Yom HaShoah",
+    "in_effect": "All Day",
+    "category": "Somber"
+  },
+  {
+    "date": "2026-04-21",
+    "holiday": "Yom HaZikaron",
+    "in_effect": "Until Sunset",
+    "category": "Somber"
+  },
+  {
+    "date": "2027-05-11",
+    "holiday": "Yom HaZikaron",
+    "in_effect": "Until Sunset",
+    "category": "Somber"
+  },
+  {
+    "date": "2028-05-01",
+    "holiday": "Yom HaZikaron",
+    "in_effect": "Until Sunset",
+    "category": "Somber"
+  },
+  {
+    "date": "2026-04-22",
+    "holiday": "Yom HaAtzma'ut",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-05-12",
+    "holiday": "Yom HaAtzma'ut",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-05-02",
+    "holiday": "Yom HaAtzma'ut",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-05-05",
+    "holiday": "Lag BaOmer",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-05-25",
+    "holiday": "Lag BaOmer",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-05-14",
+    "holiday": "Lag BaOmer",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-05-21",
+    "holiday": "Erev Shavuot",
+    "in_effect": "From 4:00pm",
+    "category": "Major"
+  },
+  {
+    "date": "2027-06-10",
+    "holiday": "Erev Shavuot",
+    "in_effect": "From 4:00pm",
+    "category": "Major"
+  },
+  {
+    "date": "2028-05-30",
+    "holiday": "Erev Shavuot",
+    "in_effect": "From 4:00pm",
+    "category": "Major"
+  },
+  {
+    "date": "2026-05-22",
+    "holiday": "Shavuot I",
+    "in_effect": "All Day",
+    "category": "Major"
+  },
+  {
+    "date": "2027-06-11",
+    "holiday": "Shavuot I",
+    "in_effect": "All Day",
+    "category": "Major"
+  },
+  {
+    "date": "2028-05-31",
+    "holiday": "Shavuot I",
+    "in_effect": "All Day",
+    "category": "Major"
+  },
+  {
+    "date": "2026-05-23",
+    "holiday": "Shavuot II",
+    "in_effect": "Until 10:00pm",
+    "category": "Major"
+  },
+  {
+    "date": "2027-06-12",
+    "holiday": "Shavuot II",
+    "in_effect": "Until 10:00pm",
+    "category": "Major"
+  },
+  {
+    "date": "2028-06-01",
+    "holiday": "Shavuot II",
+    "in_effect": "Until 10:00pm",
+    "category": "Major"
+  },
+  {
+    "date": "2026-07-02",
+    "holiday": "Tzom Tammuz",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-07-22",
+    "holiday": "Tzom Tammuz",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-07-11",
+    "holiday": "Tzom Tammuz",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-07-22",
+    "holiday": "Erev Tish'a B'Av",
+    "in_effect": "From 4:00pm",
+    "category": "Somber"
+  },
+  {
+    "date": "2027-08-11",
+    "holiday": "Erev Tish'a B'Av",
+    "in_effect": "From 4:00pm",
+    "category": "Somber"
+  },
+  {
+    "date": "2028-07-31",
+    "holiday": "Erev Tish'a B'Av",
+    "in_effect": "From 4:00pm",
+    "category": "Somber"
+  },
+  {
+    "date": "2026-07-23",
+    "holiday": "Tish'a B'Av",
+    "in_effect": "Until 10:00pm",
+    "category": "Somber"
+  },
+  {
+    "date": "2027-08-12",
+    "holiday": "Tish'a B'Av",
+    "in_effect": "Until 10:00pm",
+    "category": "Somber"
+  },
+  {
+    "date": "2028-08-01",
+    "holiday": "Tish'a B'Av",
+    "in_effect": "Until 10:00pm",
+    "category": "Somber"
+  },
+  {
+    "date": "2026-07-29",
+    "holiday": "Tu B'Av",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-08-18",
+    "holiday": "Tu B'Av",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-08-07",
+    "holiday": "Tu B'Av",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-09-11",
+    "holiday": "Erev Rosh Hashanah",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-10-01",
+    "holiday": "Erev Rosh Hashanah",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-09-20",
+    "holiday": "Erev Rosh Hashanah",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-09-12",
+    "holiday": "Rosh Hashanah - Day 1",
+    "in_effect": "All Day",
+    "category": "High"
+  },
+  {
+    "date": "2027-10-02",
+    "holiday": "Rosh Hashanah - Day 1",
+    "in_effect": "All Day",
+    "category": "High"
+  },
+  {
+    "date": "2028-09-21",
+    "holiday": "Rosh Hashanah - Day 1",
+    "in_effect": "All Day",
+    "category": "High"
+  },
+  {
+    "date": "2026-09-13",
+    "holiday": "Rosh Hashanah - Day 2",
+    "in_effect": "Until 10:00pm",
+    "category": "High"
+  },
+  {
+    "date": "2027-10-03",
+    "holiday": "Rosh Hashanah - Day 2",
+    "in_effect": "Until 10:00pm",
+    "category": "High"
+  },
+  {
+    "date": "2028-09-22",
+    "holiday": "Rosh Hashanah - Day 2",
+    "in_effect": "Until 10:00pm",
+    "category": "High"
+  },
+  {
+    "date": "2026-09-14",
+    "holiday": "Tzom Gedaliah",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-10-04",
+    "holiday": "Tzom Gedaliah",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-09-24",
+    "holiday": "Tzom Gedaliah",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-09-20",
+    "holiday": "Erev Yom Kippur",
+    "in_effect": "From 4:00pm",
+    "category": "High"
+  },
+  {
+    "date": "2027-10-10",
+    "holiday": "Erev Yom Kippur",
+    "in_effect": "From 4:00pm",
+    "category": "High"
+  },
+  {
+    "date": "2028-09-29",
+    "holiday": "Erev Yom Kippur",
+    "in_effect": "From 4:00pm",
+    "category": "High"
+  },
+  {
+    "date": "2026-09-21",
+    "holiday": "Yom Kippur",
+    "in_effect": "Until 9:00pm",
+    "category": "High"
+  },
+  {
+    "date": "2027-10-11",
+    "holiday": "Yom Kippur",
+    "in_effect": "Until 9:00pm",
+    "category": "High"
+  },
+  {
+    "date": "2028-09-30",
+    "holiday": "Yom Kippur",
+    "in_effect": "Until 9:00pm",
+    "category": "High"
+  },
+  {
+    "date": "2026-09-25",
+    "holiday": "Erev Sukkot",
+    "in_effect": "From 4:00pm",
+    "category": "Major"
+  },
+  {
+    "date": "2027-10-15",
+    "holiday": "Erev Sukkot",
+    "in_effect": "From 4:00pm",
+    "category": "Major"
+  },
+  {
+    "date": "2028-10-04",
+    "holiday": "Erev Sukkot",
+    "in_effect": "From 4:00pm",
+    "category": "Major"
+  },
+  {
+    "date": "2026-09-26",
+    "holiday": "Sukkot - Day 1",
+    "in_effect": "All Day",
+    "category": "Major"
+  },
+  {
+    "date": "2027-10-16",
+    "holiday": "Sukkot - Day 1",
+    "in_effect": "All Day",
+    "category": "Major"
+  },
+  {
+    "date": "2028-10-05",
+    "holiday": "Sukkot - Day 1",
+    "in_effect": "All Day",
+    "category": "Major"
+  },
+  {
+    "date": "2026-09-27",
+    "holiday": "Sukkot - Day 2",
+    "in_effect": "Until 9:00pm",
+    "category": "Major"
+  },
+  {
+    "date": "2027-10-17",
+    "holiday": "Sukkot - Day 2",
+    "in_effect": "Until 9:00pm",
+    "category": "Major"
+  },
+  {
+    "date": "2028-10-06",
+    "holiday": "Sukkot - Day 2",
+    "in_effect": "Until 9:00pm",
+    "category": "Major"
+  },
+  {
+    "date": "2026-09-28",
+    "holiday": "Sukkot - Day 3 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-10-18",
+    "holiday": "Sukkot - Day 3 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-10-07",
+    "holiday": "Sukkot - Day 3 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-09-29",
+    "holiday": "Sukkot - Day 4 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-10-19",
+    "holiday": "Sukkot - Day 4 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-10-08",
+    "holiday": "Sukkot - Day 4 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-09-30",
+    "holiday": "Sukkot - Day 5 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-10-20",
+    "holiday": "Sukkot - Day 5 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-10-09",
+    "holiday": "Sukkot - Day 5 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-10-01",
+    "holiday": "Sukkot - Day 6 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-10-21",
+    "holiday": "Sukkot - Day 6 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-10-10",
+    "holiday": "Sukkot - Day 6 (CH''M)",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-10-02",
+    "holiday": "Erev Shmini Atzeret",
+    "in_effect": "From 4:00pm",
+    "category": "Major"
+  },
+  {
+    "date": "2027-10-22",
+    "holiday": "Erev Shmini Atzeret",
+    "in_effect": "From 4:00pm",
+    "category": "Major"
+  },
+  {
+    "date": "2028-10-11",
+    "holiday": "Erev Shmini Atzeret",
+    "in_effect": "From 4:00pm",
+    "category": "Major"
+  },
+  {
+    "date": "2026-10-03",
+    "holiday": "Shmini Atzeret",
+    "in_effect": "All Day",
+    "category": "Major"
+  },
+  {
+    "date": "2027-10-23",
+    "holiday": "Shmini Atzeret",
+    "in_effect": "All Day",
+    "category": "Major"
+  },
+  {
+    "date": "2028-10-12",
+    "holiday": "Shmini Atzeret",
+    "in_effect": "All Day",
+    "category": "Major"
+  },
+  {
+    "date": "2026-10-04",
+    "holiday": "Simchat Torah",
+    "in_effect": "Until 9:00pm",
+    "category": "Major"
+  },
+  {
+    "date": "2027-10-24",
+    "holiday": "Simchat Torah",
+    "in_effect": "Until 9:00pm",
+    "category": "Major"
+  },
+  {
+    "date": "2028-10-13",
+    "holiday": "Simchat Torah",
+    "in_effect": "Until 9:00pm",
+    "category": "Major"
+  },
+  {
+    "date": "2026-12-04",
+    "holiday": "Chanukkah  (light one candle)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-12-24",
+    "holiday": "Chanukkah  (light one candle)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-12-12",
+    "holiday": "Chanukkah  (light one candle)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-12-05",
+    "holiday": "Chanukkah - Day 2(light two candles)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-12-25",
+    "holiday": "Chanukkah - Day 2(light two candles)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-12-13",
+    "holiday": "Chanukkah - Day 2(light two candles)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-12-06",
+    "holiday": "Chanukkah (light three candles)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-12-26",
+    "holiday": "Chanukkah (light three candles)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-12-14",
+    "holiday": "Chanukkah (light three candles)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-12-07",
+    "holiday": "Chanukkah (light four candles)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-12-27",
+    "holiday": "Chanukkah (light four candles)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-12-15",
+    "holiday": "Chanukkah (light four candles)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-12-08",
+    "holiday": "Chanukkah: (light five candles)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-12-28",
+    "holiday": "Chanukkah: (light five candles)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-12-16",
+    "holiday": "Chanukkah: (light five candles)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-12-09",
+    "holiday": "Chanukkah: (light six candles)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-12-29",
+    "holiday": "Chanukkah: (light six candles)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-12-17",
+    "holiday": "Chanukkah: (light six candles)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-12-10",
+    "holiday": "Chanukkah (light seven candles)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-12-30",
+    "holiday": "Chanukkah (light seven candles)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-12-18",
+    "holiday": "Chanukkah (light seven candles)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-12-11",
+    "holiday": "Chanukkah (light eight candles)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-12-31",
+    "holiday": "Chanukkah (light eight candles)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-12-19",
+    "holiday": "Chanukkah (light eight candles)",
+    "in_effect": "From 4:00pm",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-12-12",
+    "holiday": "Chanukkah 8th day",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-01-01",
+    "holiday": "Chanukkah 8th day",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-12-20",
+    "holiday": "Chanukkah 8th day",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2026-12-20",
+    "holiday": "Asara B'Tevet",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2027-01-09",
+    "holiday": "Asara B'Tevet",
+    "in_effect": "All Day",
+    "category": "Minor"
+  },
+  {
+    "date": "2028-12-28",
+    "holiday": "Asara B'Tevet",
+    "in_effect": "All Day",
+    "category": "Minor"
+  }
+];
+
+    const result = document.getElementById("result");
+    const statusBadge = document.getElementById("statusBadge");
+    const holidayName = document.getElementById("holidayName");
+    const holidayDateText = document.getElementById("holidayDateText");
+    const holidayEffect = document.getElementById("holidayEffect");
+    const holidayCategory = document.getElementById("holidayCategory");
+    const policyLinks = document.getElementById("policyLinks");
+    const holidayDate = document.getElementById("holidayDate");
+    const checkBtn = document.getElementById("checkBtn");
+
+    function formatDate(yyyyMmDd) {
+      const [year, month, day] = yyyyMmDd.split("-").map(Number);
+      const date = new Date(year, month - 1, day);
+      return date.toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    }
+
+    function setBadge(category) {
+      const normalized = (category || "none").toLowerCase();
+      statusBadge.className = "status";
+      if (normalized.includes("major")) {
+        statusBadge.classList.add("major");
+      } else if (normalized.includes("high")) {
+        statusBadge.classList.add("high");
+      } else if (normalized.includes("minor")) {
+        statusBadge.classList.add("minor");
+      } else {
+        statusBadge.classList.add("none");
+      }
+      statusBadge.textContent = category || "No Jewish holidays";
+    }
+
+    function checkHoliday() {
+      const selectedDate = holidayDate.value;
+      if (!selectedDate) {
+        result.classList.remove("hidden");
+        setBadge("No date selected");
+        holidayName.textContent = "Please choose a date.";
+        holidayDateText.textContent = "";
+        holidayEffect.textContent = "";
+        holidayCategory.textContent = "";
+        policyLinks.classList.add("hidden");
+        return;
+      }
+
+      const matches = holidayData.filter(item => item.date === selectedDate);
+
+      result.classList.remove("hidden");
+
+      if (matches.length === 0) {
+        setBadge("No Jewish holidays");
+        holidayName.textContent = "No Jewish holidays";
+        holidayDateText.textContent = formatDate(selectedDate);
+        holidayEffect.textContent = "There are no listed Jewish holidays for this date.";
+        holidayCategory.textContent = "";
+        policyLinks.classList.add("hidden");
+        return;
+      }
+
+      const first = matches[0];
+      setBadge(first.category);
+      holidayName.textContent = matches.map(item => item.holiday).join(" / ");
+      holidayDateText.textContent = formatDate(selectedDate);
+      holidayEffect.textContent = matches.map(item => `In effect: ${item.in_effect}`).join(" • ");
+      holidayCategory.textContent = `Category: ${first.category}`;
+      policyLinks.classList.remove("hidden");
+    }
+
+    checkBtn.addEventListener("click", checkHoliday);
+    holidayDate.addEventListener("change", checkHoliday);
+  </script>
+</body>
+</html>
